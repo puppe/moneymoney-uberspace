@@ -74,18 +74,18 @@ function RefreshAccount (account, since)
     local children = row:children()
     local pattern = '(%d%d)%.(%d%d)%.(%d%d%d%d)'
     local day, month, year = children:get(1):text():match(pattern)
-    local valueTime = os.time{day=day, month=month, year=year}
+    local bookingDate = os.time{day=day, month=month, year=year}
 
-    if valueTime < since then
+    if bookingDate < since then
       print('Stopping parsing because transaction is too old.')
-      print('Date of transaction: ' .. os.date('%c', valueTime))
+      print('Date of transaction: ' .. os.date('%c', bookingDate))
       print('since: ' .. os.date('%c', since))
       break
     end
 
     local amount = ParseAmount(children:get(3):text())
     table.insert(transactions, {
-                   bookingDate = valueTime,
+                   bookingDate = bookingDate,
                    amount = amount
     })
   end
