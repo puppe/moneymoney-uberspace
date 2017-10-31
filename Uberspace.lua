@@ -6,7 +6,11 @@
 
 WebBanking{version = 1.00,
            url = 'https://uberspace.de/login',
-           services = {'Uberspace.de'}}
+           services = {'Uberspace.de'},
+           description = string.format(
+             MM.localizeText("Get balance and transactions for %s"),
+             "Uberspace.de")
+}
 
 function SupportsBank (protocol, bankCode)
   return bankCode == 'Uberspace.de' and protocol == ProtocolWebBanking
