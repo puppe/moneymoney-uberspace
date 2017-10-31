@@ -4,7 +4,7 @@
   file, You can obtain one at http://mozilla.org/MPL/2.0/.
 --]]
 
-WebBanking{version = 1.00,
+WebBanking{version = 1.01,
            url = 'https://uberspace.de/login',
            services = {'Uberspace.de'},
            description = string.format(
