@@ -52,6 +52,11 @@ function RefreshAccount (account, since)
   function ParseAmount (amountString)
     local pattern = '(%-?%d+),(%d%d)'
     local euro, cent = amountString:match(pattern)
+
+    if not euro or not cent then
+      return nil
+    end
+
     euro = tonumber(euro)
     cent = tonumber(cent) / 100
     if euro < 0 then
@@ -90,8 +95,11 @@ function RefreshAccount (account, since)
     })
   end
 
-  balanceElement = html:xpath('//*[@id="total"]')
-  balance = ParseAmount(balanceElement:text())
+  local balanceElement = html:xpath('//*[@id="total"]')
+  local balance = ParseAmount(balanceElement:text())
+  if not balance then
+    balance = 0
+  end
   return {balance=balance, transactions=transactions}
 end
 
