@@ -5,7 +5,7 @@
 --]]
 
 WebBanking{version = 1.02,
-           url = 'https://uberspace.de/login',
+           url = 'https://dashboard.uberspace.de/login',
            services = {'Uberspace.de'},
            description = string.format(
              MM.localizeText("Get balance and transactions for %s"),
@@ -24,7 +24,7 @@ function InitializeSession (protocol, bankCode, username, username2,
   -- Login.
   usUsername = username
 
-  html = HTML(usConnection:get('https://uberspace.de/login'))
+  html = HTML(usConnection:get('https://dashboard.uberspace.de/login'))
   html:xpath('//input[@name="login"]'):attr('value', username)
   html:xpath('//input[@name="password"]'):attr('value', password)
 
@@ -67,7 +67,7 @@ function RefreshAccount (account, since)
   end
 
   html = HTML(usConnection:get(
-                'https://uberspace.de/dashboard/accounting'))
+                'https://dashboard.uberspace.de/dashboard/accounting'))
   tableRows = html:xpath(
     '//*[@id="transactions"]//tr[count(td)=3][position()<last()]')
   print('Found ' .. tableRows:length() .. ' rows')
@@ -104,5 +104,5 @@ function RefreshAccount (account, since)
 end
 
 function EndSession ()
-  usConnection:get('https://uberspace.de/logout')
+  usConnection:get('https://dashboard.uberspace.de/logout')
 end
