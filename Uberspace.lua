@@ -6,14 +6,14 @@
 
 WebBanking{version = 1.02,
            url = 'https://dashboard.uberspace.de/login',
-           services = {'Uberspace.de metauser'},
+           services = {'Uberspace.de'},
            description = string.format(
              MM.localizeText("Get balance and transactions for %s"),
-             "Uberspace.de metauser")
+             "Uberspace.de")
 }
 
 function SupportsBank (protocol, bankCode)
-  return bankCode == 'Uberspace.de metauser' and protocol == ProtocolWebBanking
+  return bankCode == 'Uberspace.de' and protocol == ProtocolWebBanking
 end
 
 local usConnection = Connection()
@@ -22,20 +22,24 @@ local usUsername
 function InitializeSession (protocol, bankCode, username, username2,
                             password, username3)
   
-  -- Split the input into email and username based on '|'
+  -- Check if the username contains '|'
   local splitPos = username:find("|")
-  if not splitPos then
-    return "Failed to log in. Please check that the username includes both email and username separated by '|'."
+  
+  if splitPos then
+    -- If `|` is found, split into email and username
+    usLogin = username:sub(1, splitPos - 1)
+    usUsername = username:sub(splitPos + 1)
+  else
+    -- If no `|` is found, use the entire value as both email and username
+    usLogin = username
+    usUsername = username
   end
 
-  usEmail = username:sub(1, splitPos - 1)
-  usUsername = username:sub(splitPos + 1)
-
   -- Login.
-  usUsername = usEmail
+  usUsername = usLogin
 
   html = HTML(usConnection:get('https://dashboard.uberspace.de/login'))
-  html:xpath('//input[@name="login"]'):attr('value', usEmail)
+  html:xpath('//input[@name="login"]'):attr('value', usLogin)
   html:xpath('//input[@name="password"]'):attr('value', password)
 
   html = HTML(
