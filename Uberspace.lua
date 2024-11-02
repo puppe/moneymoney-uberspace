@@ -42,10 +42,10 @@ function InitializeSession (protocol, bankCode, username, username2,
 
   html = HTML(
     usConnection:request(html:xpath('//input[@name="submit"]'):click()))
-  --if html:xpath('//input[@name="login"]'):length() > 0 then
+  if html:xpath('//input[@name="password"]'):length() > 0 then
     -- We are still at the login screen.
-    --return "Failed to log in. Please check your user credentials."
-  --end
+    return "Failed to log in. Please check your user credentials."
+  end
 end
 
 function ListAccounts (knownAccounts)
