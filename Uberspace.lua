@@ -4,7 +4,7 @@
   file, You can obtain one at http://mozilla.org/MPL/2.0/.
 --]]
 
-WebBanking{version = 1.02,
+WebBanking{version = 1.03,
            url = 'https://dashboard.uberspace.de/login',
            services = {'Uberspace.de'},
            description = string.format(
@@ -30,14 +30,12 @@ function InitializeSession (protocol, bankCode, username, username2,
     usLogin = username:sub(1, splitPos - 1)
     usUsername = username:sub(splitPos + 1)
   else
-    -- If no `|` is found, use the entire value as both email and username
+    -- If no `|` is found, use the entire value as both login and username
     usLogin = username
     usUsername = username
   end
 
   -- Login.
-  usUsername = usLogin
-
   html = HTML(usConnection:get('https://dashboard.uberspace.de/login'))
   html:xpath('//input[@name="login"]'):attr('value', usLogin)
   html:xpath('//input[@name="password"]'):attr('value', password)
