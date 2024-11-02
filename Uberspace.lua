@@ -6,14 +6,14 @@
 
 WebBanking{version = 1.02,
            url = 'https://dashboard.uberspace.de/login',
-           services = {'Uberspace.de'},
+           services = {'Uberspace.de metauser'},
            description = string.format(
              MM.localizeText("Get balance and transactions for %s"),
-             "Uberspace.de")
+             "Uberspace.de metauser")
 }
 
 function SupportsBank (protocol, bankCode)
-  return bankCode == 'Uberspace.de' and protocol == ProtocolWebBanking
+  return bankCode == 'Uberspace.de metauser' and protocol == ProtocolWebBanking
 end
 
 local usConnection = Connection()
@@ -21,19 +21,29 @@ local usUsername
 
 function InitializeSession (protocol, bankCode, username, username2,
                             password, username3)
+  
+  -- Split the input into email and username based on '|'
+  local splitPos = username:find("|")
+  if not splitPos then
+    return "Failed to log in. Please check that the username includes both email and username separated by '|'."
+  end
+
+  usEmail = username:sub(1, splitPos - 1)
+  usUsername = username:sub(splitPos + 1)
+
   -- Login.
-  usUsername = username
+  usUsername = usEmail
 
   html = HTML(usConnection:get('https://dashboard.uberspace.de/login'))
-  html:xpath('//input[@name="login"]'):attr('value', username)
+  html:xpath('//input[@name="login"]'):attr('value', usEmail)
   html:xpath('//input[@name="password"]'):attr('value', password)
 
   html = HTML(
     usConnection:request(html:xpath('//input[@name="submit"]'):click()))
-  if html:xpath('//input[@name="login"]'):length() > 0 then
+  --if html:xpath('//input[@name="login"]'):length() > 0 then
     -- We are still at the login screen.
-    return "Failed to log in. Please check your user credentials."
-  end
+    --return "Failed to log in. Please check your user credentials."
+  --end
 end
 
 function ListAccounts (knownAccounts)
@@ -66,8 +76,12 @@ function RefreshAccount (account, since)
     end
   end
 
-  html = HTML(usConnection:get(
+  -- Adjust accounting URL to include the specific username
+  local accountingUrl = 'https://dashboard.uberspace.de/dashboard/accounting?asteroid=' .. usUsername
+  html = HTML(usConnection:get(accountingUrl))
+  --[[ html = HTML(usConnection:get(
                 'https://dashboard.uberspace.de/dashboard/accounting'))
+                --]]
   tableRows = html:xpath(
     '//*[@id="transactions"]//tr[count(td)=3][position()<last()]')
   print('Found ' .. tableRows:length() .. ' rows')
